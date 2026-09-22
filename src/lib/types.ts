@@ -106,3 +106,27 @@ export type Scraper = {
   exampleOutputs?: ExampleTable[];
   limitations?: string[];
 };
+
+/**
+ * Non-scraper work shown in the "More projects" section: internal tools,
+ * dashboards and websites. Deliberately light, with no detail page.
+ */
+export const PROJECT_KINDS = ["internal-tool", "dashboard", "website"] as const;
+export type ProjectKind = (typeof PROJECT_KINDS)[number];
+
+export type Project = {
+  slug: string;
+  name: string;
+  /** One or two sentences. */
+  description: string;
+  kind: ProjectKind;
+  stack?: string[];
+  liveUrl?: string;
+  repoUrl?: string;
+  /** Host label when the repository is not on GitHub, for example "Bitbucket". */
+  repoLabel?: string;
+  /** Private repositories return 404 to anonymous visitors; flag them so the UI can say so. */
+  repoPrivate?: boolean;
+  /** ISO date (YYYY-MM-DD) of the last meaningful change. */
+  lastUpdated?: string;
+};

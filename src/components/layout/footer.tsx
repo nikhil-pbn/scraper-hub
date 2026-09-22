@@ -57,6 +57,14 @@ export function Footer() {
                   </Link>
                 </li>
               ))}
+              <li>
+                <Link
+                  href="/#projects"
+                  className="text-foreground/80 transition-colors hover:text-foreground"
+                >
+                  More projects
+                </Link>
+              </li>
             </ul>
           </div>
 

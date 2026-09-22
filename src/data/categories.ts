@@ -1,4 +1,4 @@
-import type { ScraperCategory, ScraperStatus } from "@/lib/types";
+import type { ProjectKind, ScraperCategory, ScraperStatus } from "@/lib/types";
 
 /**
  * Visual tone per category and status. Complete Tailwind class strings live here so
@@ -144,4 +144,15 @@ export const STATUSES: Record<ScraperStatus, StatusMeta> = {
     description: "Kept for reference, no longer used.",
     tone: "zinc",
   },
+};
+
+export type ProjectKindMeta = {
+  label: string;
+  tone: Tone;
+};
+
+export const PROJECT_KINDS_META: Record<ProjectKind, ProjectKindMeta> = {
+  "internal-tool": { label: "Internal tool", tone: "sky" },
+  dashboard: { label: "Dashboard", tone: "amber" },
+  website: { label: "Website", tone: "violet" },
 };

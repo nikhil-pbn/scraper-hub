@@ -1,11 +1,14 @@
 import { Hero } from "@/components/home/hero";
+import { ProjectsSection } from "@/components/home/projects-section";
 import { Container } from "@/components/layout/container";
 import { Reveal } from "@/components/motion/reveal";
 import { ScraperExplorer } from "@/components/scrapers/scraper-explorer";
+import { getAllProjects } from "@/lib/projects";
 import { getAllScrapers } from "@/lib/scrapers";
 
 export default function HomePage() {
   const scrapers = getAllScrapers();
+  const projects = getAllProjects();
 
   return (
     <>
@@ -32,6 +35,8 @@ export default function HomePage() {
           <ScraperExplorer scrapers={scrapers} />
         </Container>
       </section>
+
+      <ProjectsSection projects={projects} />
     </>
   );
 }

@@ -33,7 +33,7 @@ Set `NEXT_PUBLIC_SITE_URL` (see `.env.example`) so canonical URLs, the sitemap a
 
 | Route | Purpose |
 | --- | --- |
-| `/` | Hero + searchable, filterable scraper grid |
+| `/` | Hero + searchable, filterable scraper grid + "More projects" cards |
 | `/scrapers/[slug]` | Full breakdown of one scraper |
 | `/opengraph-image`, `/scrapers/[slug]/opengraph-image` | Generated social cards |
 | `/sitemap.xml`, `/robots.txt` | SEO basics |
@@ -45,6 +45,10 @@ Set `NEXT_PUBLIC_SITE_URL` (see `.env.example`) so canonical URLs, the sitemap a
 3. To show a real screenshot, drop it into `public/scrapers/` and set `image: { src: "/scrapers/<slug>.png", alt: "…" }`. Until then a generated placeholder tinted by category is shown.
 4. New categories or statuses go in `src/lib/types.ts` (the union) and `src/data/categories.ts` (label, description, colour tone).
 5. New icons: add a key to `ScraperIcon` and map it in `src/components/scrapers/scraper-icon.tsx`.
+
+## Adding a non-scraper project
+
+Internal tools and dashboards live in the lighter "More projects" section on the home page (marketing websites are deliberately left out). Append a `Project` object to `src/data/projects.ts` (name, one-line description, `kind`, optional stack, `liveUrl`, `repoUrl`). There is no detail page for these on purpose.
 
 ## Project layout
 
