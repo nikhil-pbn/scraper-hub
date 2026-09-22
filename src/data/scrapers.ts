@@ -11,292 +11,6 @@ import type { Scraper } from "@/lib/types";
  */
 export const scrapers: Scraper[] = [
   {
-    slug: "dentist-finder",
-    name: "Dentist Finder",
-    tagline:
-      "Find dental practices near any US ZIP code, with addresses, phones, emails and websites, ready to export or save to a shared sheet.",
-    description: [
-      "Dentist Finder takes a US ZIP code, a result count and a search radius, geocodes the ZIP to coordinates and asks a map data provider for every business tagged as a dentist inside that radius. Results are normalised into one provider-independent model, de-duplicated, sorted nearest-first and shown as a paginated table, with cards on mobile.",
-      "It runs on free OpenStreetMap services by default (Nominatim for geocoding, Overpass for places) with no API key or billing, and can be switched to Google Places (New) with a single environment variable. Any field the source does not have is left empty and rendered as a dash; nothing is guessed or padded.",
-      "Every search can be exported to CSV or Excel, or saved into a shared Google Sheet as an upsert keyed on the Map URL, so repeated searches enrich the sheet instead of duplicating it. Competitor Detection runs on the same result set to add a vendor column.",
-    ],
-    category: "lead-generation",
-    status: "active",
-    icon: "map-pinned",
-    runsOn: "Vercel",
-    lastUpdated: "2026-09-14",
-    liveUrl: "https://dentist-finder-pms.vercel.app",
-    githubUrl: "https://github.com/nikhil-pbn/dentist-finder",
-    resources: [
-      {
-        label: "README",
-        href: "https://github.com/nikhil-pbn/dentist-finder#readme",
-        description: "Setup, providers, exports and known limitations",
-        kind: "docs",
-      },
-    ],
-    source: {
-      summary: "OpenStreetMap (Nominatim + Overpass), optionally Google Places",
-      details: [
-        "Nominatim geocodes the ZIP code to coordinates (one request per second at most)",
-        "Overpass API returns amenity=dentist nodes, ways and relations within the radius",
-        "Google Geocoding and Places (New) Text Search when MAP_PROVIDER is set to google",
-      ],
-    },
-    destination: {
-      summary: "CSV, Excel and Google Sheets",
-      details: [
-        "CSV download named dentists-<zip>-<km>km.csv",
-        "Excel .xlsx download written without a spreadsheet library",
-        "Upsert into a Google Sheet, one tab per provider (osm / google), keyed on Map URL",
-      ],
-    },
-    keyData: ["Name", "Address", "Phone", "Email", "Website", "Map URL", "Competitor"],
-    input: [
-      { label: "ZIP code", description: "5-digit US ZIP; ZIP+4 is accepted and truncated." },
-      { label: "Results", description: "20, 30, 50 dentists or All (no limit). Default 20." },
-      { label: "Search radius", description: "5, 10, 15, 25 or 50 km. Default 15 km." },
-      {
-        label: "Only show dentists that have a website",
-        description: "Checkbox, on by default. Narrows results heavily.",
-      },
-    ],
-    dataCollected: [
-      { name: "Name" },
-      { name: "Address", description: "Full and short forms" },
-      { name: "Phone" },
-      { name: "Email", description: "OpenStreetMap only, roughly a third of practices with a website" },
-      { name: "Website" },
-      { name: "Latitude / Longitude" },
-      { name: "Distance", description: "Straight-line kilometres from the ZIP centre" },
-      { name: "Map URL", description: "OpenStreetMap or Google Maps link; the upsert key" },
-      { name: "Opening hours" },
-      { name: "Open now", description: "Google provider only" },
-      { name: "Rating / Reviews", description: "Google provider only" },
-      { name: "Business status", description: "Google provider only" },
-      { name: "Search ZIP", description: "The ZIP that was searched, kept from first sighting" },
-      { name: "Competitor", description: "Filled by Competitor Detection" },
-      { name: "Source", description: "osm or google" },
-    ],
-    howItWorks: [
-      {
-        title: "Enter a ZIP, result count and radius",
-        description: "The form checks the ZIP shape immediately for fast feedback.",
-      },
-      {
-        title: "Browser calls the search API",
-        description:
-          "The route enforces a per-IP budget of 20 requests per minute and re-validates every parameter; bad values get a 400, never a silent fix.",
-      },
-      {
-        title: "Geocode the ZIP",
-        description: "Nominatim (or Google Geocoding) turns the ZIP into a latitude and longitude.",
-      },
-      {
-        title: "Fetch dentist places",
-        description:
-          "Overpass (or Places Text Search) returns every dentist within the radius, with retries, backoff and endpoint failover.",
-      },
-      {
-        title: "Normalise, de-duplicate, sort",
-        description:
-          "Records become one Dentist model, duplicates within 50 m with the same name are merged, and results sort nearest-first.",
-      },
-      {
-        title: "Render and export",
-        description:
-          "The table shows 20 per page; exports and sheet saves always cover every result of the search.",
-      },
-    ],
-    output: [
-      "A paginated results table with Dentist, Address, Phone, Email, Website, Map and Competitor columns, cards on mobile, and a summary line such as “Centred on Irvine, CA 92618 · 20 dentists found”.",
-      "Exports share one column set per provider. OpenStreetMap: Name, Address, Phone, Email, Website, Map URL, Search ZIP, Competitor. Google adds Rating, Reviews, Open Now and Business Status.",
-      "Saving to Google Sheets is an upsert keyed on Map URL: new practices are appended, changed cells rewritten, blanks never overwrite existing values and nothing is deleted.",
-    ],
-    technologies: [
-      { name: "Next.js 16", kind: "framework" },
-      { name: "React 19", kind: "framework" },
-      { name: "TypeScript", kind: "language" },
-      { name: "Tailwind CSS v4", kind: "library" },
-      { name: "shadcn/ui", kind: "library" },
-      { name: "Nominatim", kind: "api" },
-      { name: "Overpass API", kind: "api" },
-      { name: "Google Places API (New)", kind: "api" },
-      { name: "Google Sheets API", kind: "api" },
-      { name: "Google Drive API", kind: "api" },
-      { name: "Vercel", kind: "infra" },
-      { name: "Service-account JWT via node:crypto", kind: "technique" },
-    ],
-    exampleOutputs: [
-      {
-        title: "CSV export (OpenStreetMap provider)",
-        caption:
-          "Column order exactly as exported. The row is the project's own test fixture, not a real practice.",
-        columns: ["Name", "Address", "Phone", "Email", "Website", "Map URL", "Search ZIP", "Competitor"],
-        rows: [
-          [
-            "Irvine Family Dental",
-            "123 Main St, Irvine, CA 92618",
-            "+1 949-555-0100",
-            "example@email.com",
-            "https://example.com/",
-            "https://www.openstreetmap.org/node/1",
-            "92618",
-            "",
-          ],
-        ],
-      },
-    ],
-    limitations: [
-      "OpenStreetMap is community-maintained and incomplete. Fewer results than requested is normal and nothing is padded or invented.",
-      "The public Overpass endpoint fails roughly one request in three under load. The app retries up to three times with backoff inside a 50 s budget and can fail over to another endpoint.",
-      "Rate limited to 20 searches per minute per client IP. Nominatim is throttled to about one request per second.",
-      "Email coverage is roughly one third of OpenStreetMap dentists that list a website. Emails are never inferred.",
-      "The Google provider caps at 60 results, never returns emails, and bills every uncached search.",
-      "Caches and rate-limit counters live per process, so hit rates drop on serverless deployments.",
-      "Distances are straight-line (Haversine), not driving distance. ZIP geocoding accuracy is OpenStreetMap's.",
-      "Provider attribution (OpenStreetMap ODbL, “Powered by Google”) is not currently rendered and must be added before external use.",
-    ],
-  },
-
-  {
-    slug: "competitor-detection",
-    name: "Competitor Detection",
-    tagline:
-      "Crawls each dental practice's website and names the practice-management (PMS) or patient-engagement vendor it links to.",
-    description: [
-      "Competitor Detection adds a Competitor column to a Dentist Finder result set by crawling each practice's public website and matching every URL it finds against a curated list of dental practice-management (PMS) and patient-engagement vendor domains.",
-      "For each site it fetches the homepage, follows the patient-journey links (Book Appointment, Schedule, Patient Portal, Forms, New Patient, Contact, Login, Pay), collects links, form actions, iframes and script sources, probes external booking and portal destinations and records every redirect hop. A host match names the vendor; product names win over family names, so a site shows “Denticon” rather than “Denticon, Planet DDS”.",
-      "The result is a vendor name, a comma-joined list, “No Competitor” when a site was inspected and nothing matched, or an empty cell when the site could not be inspected at all. It is URL matching, not an inference about the software running inside the practice.",
-      "Vendors it can name: RevenueWell, Weave, NexHealth, Adit, Dental Intelligence, Modento, Yapi, Solutionreach, Mango Voice, Flex Dental, Lighthouse 360, Dentrix, Dentrix Ascend, Eaglesoft, Open Dental, Curve Dental, Denticon, CareStack, DentiMax, Sensei, Dentally, tab32, Practice-Web, SoftDent, ClearDent, axiUm, WinOMS, MacPractice, iDentalSoft, Cloud 9, Planet DDS and Carestream Dental. Marketplaces such as Zocdoc, LocalMed and Demandforce are deliberately excluded because they say nothing about the system a practice runs.",
-    ],
-    category: "tech-detection",
-    status: "active",
-    icon: "radar",
-    runsOn: "Vercel, inside Dentist Finder",
-    lastUpdated: "2026-09-14",
-    liveUrl: "https://dentist-finder-pms.vercel.app",
-    githubUrl: "https://github.com/nikhil-pbn/dentist-finder",
-    resources: [
-      {
-        label: "Detection guide",
-        href: "https://github.com/nikhil-pbn/dentist-finder/blob/master/docs/competitor-detection.md",
-        description: "How matching works and what each note means",
-        kind: "docs",
-      },
-    ],
-    source: {
-      summary: "The practices' own public websites",
-      details: [
-        "Homepage HTML plus patient-journey pages: Book, Schedule, Portal, Forms, New Patient, Contact, Login, Pay",
-        "Links, form actions, iframes, script sources and URLs inside inline scripts",
-        "Every redirect hop of up to 5 external booking or portal destinations",
-        "Hostnames matched against a local list of 32 vendors; no third-party detection API",
-      ],
-    },
-    destination: {
-      summary: "Competitor column in the table, exports and Google Sheet",
-      details: [
-        "Results table and mobile cards, with the matching URL or a reason nothing was found",
-        "CSV and Excel exports carry one Competitor column, always last",
-        "The Google Sheet gains a Competitor column, appended to the existing header",
-      ],
-    },
-    keyData: ["Competitor", "Matched URL", "Scan note"],
-    input: [
-      {
-        label: "Detect Competitor",
-        description: "One button on a Dentist Finder result set. No fields of its own.",
-      },
-      { label: "Stop / Resume / Scan again", description: "Controls for a running or halted scan." },
-      {
-        label: "Over the wire",
-        description: "The current search query plus up to 10 dentist ids per batch. Ids travel, never URLs.",
-      },
-    ],
-    dataCollected: [
-      {
-        name: "Competitor",
-        description: "Vendor name, comma-joined list, “No Competitor”, or empty when the site could not be inspected",
-      },
-      { name: "Matches", description: "Each vendor name with the link, form, iframe, script or redirect URL that named it" },
-      { name: "Note", description: "Why nothing was found, for example “No website” or “robots.txt disallows crawling”" },
-    ],
-    howItWorks: [
-      {
-        title: "Click Detect Competitor",
-        description: "The browser drives the whole scan, so it survives short-lived serverless instances.",
-      },
-      {
-        title: "Post ids in batches of 10",
-        description:
-          "Three batches stay in flight. The server re-runs the cached search and maps ids to websites, so the route can never be pointed at arbitrary hosts.",
-      },
-      {
-        title: "Check robots.txt, fetch the homepage",
-        description: "HTML only, 10 s per request. Links are scored for patient-journey relevance.",
-      },
-      {
-        title: "Crawl relevant pages and probe external destinations",
-        description:
-          "Up to 8 internal pages and 5 external booking or portal links, recording every redirect hop. Every URL passes an SSRF guard against private and cloud-metadata ranges.",
-      },
-      {
-        title: "Match hostnames against the vendor list",
-        description: "A family name is dropped when one of its products also matched.",
-      },
-      {
-        title: "Overlay results live",
-        description:
-          "The Competitor column fills in as batches return. A failed batch retries three times with growing pauses, then halts with a Resume option.",
-      },
-      {
-        title: "Save only known values",
-        description:
-          "On save the server accepts a competitor value only if it is “No Competitor” or a list of known vendor names.",
-      },
-    ],
-    output: [
-      "A Competitor column that fills in as batches return, with a progress bar, percentage and a “Scan complete” line.",
-      "Per row: the vendor name and the URL that named it, or the reason nothing was found, such as “The site renders its links with JavaScript, which this scan cannot see”.",
-      "Values reach exports and the sheet only after a known-vendor check, so the browser cannot write free text into the spreadsheet.",
-    ],
-    technologies: [
-      { name: "Next.js Route Handler", kind: "framework" },
-      { name: "TypeScript", kind: "language" },
-      { name: "cheerio", kind: "library" },
-      { name: "Native fetch + AbortSignal", kind: "technique" },
-      { name: "Hand-written robots.txt parser", kind: "technique" },
-      { name: "SSRF guard", kind: "technique" },
-      { name: "Vercel", kind: "infra" },
-    ],
-    exampleOutputs: [
-      {
-        title: "How a match is reported",
-        caption: "Examples from the detection guide. Hosts are illustrative; vendor names are real entries in the list.",
-        columns: ["Page found", "Resolved to", "Competitor"],
-        rows: [
-          ["https://example.com/forms", "https://patientregistration.denticon.com/…", "Denticon"],
-          ["https://example.com/book", "https://book.getweave.com/…", "Weave"],
-          ["https://example.com/portal", "https://www.patientviewer.com/?RSID=…", "Open Dental"],
-          ["Site inspected, nothing recognised", "—", "No Competitor"],
-          ["No website, unreachable, or blocked by robots.txt", "—", "(empty cell)"],
-        ],
-      },
-    ],
-    limitations: [
-      "URL-host matching only. A vendor's marketing link counts, so a blog post linking to dentrix.com names Dentrix. The matched URL is shown so it can be judged.",
-      "An empty cell is not “No Competitor”. Most desktop systems leave no public trace, and unreachable sites yield nothing.",
-      "Links rendered only by JavaScript are not seen; there is no browser rendering.",
-      "Per-site caps: 8 HTML pages, 12 requests, 10 s per request, 5 redirects, 1.5 MB body and 60 s wall-clock.",
-      "10 dentists per request, 3 batches in flight, at most 120 scan requests per minute per browser.",
-      "The scan lives in the browser tab. Reloading or starting a new search drops unfinished results, so save or export first.",
-      "Search, sheet save and exports are disabled while a scan runs, and vice versa.",
-      "Honours robots.txt, never submits forms and never logs in.",
-    ],
-  },
-
-  {
     slug: "referring-domains-automation",
     name: "Referring Domains Automation",
     tagline:
@@ -311,7 +25,7 @@ export const scrapers: Scraper[] = [
     icon: "waypoints",
     runsOn: "Vercel",
     lastUpdated: "2026-08-18",
-    // The README's Vercel URL returned DEPLOYMENT_NOT_FOUND on 2026-09-22, so no live link is listed yet.
+    liveUrl: "https://ahref-referring-domains.vercel.app/",
     githubUrl: "https://github.com/nikhil-pbn/competitors-scrapper",
     resources: [
       {
@@ -476,6 +190,171 @@ export const scrapers: Scraper[] = [
   },
 
   {
+    slug: "dentist-finder",
+    name: "Dentist Finder",
+    tagline:
+      "Find dental practices near any US ZIP code, with addresses, phones, emails and websites, ready to export or save to a shared sheet.",
+    description: [
+      "Dentist Finder takes a US ZIP code, a result count and a search radius, geocodes the ZIP to coordinates and asks a map data provider for every business tagged as a dentist inside that radius. Results are normalised into one provider-independent model, de-duplicated, sorted nearest-first and shown as a paginated table, with cards on mobile.",
+      "It runs on free OpenStreetMap services by default (Nominatim for geocoding, Overpass for places) with no API key or billing, and can be switched to Google Places (New) with a single environment variable. Any field the source does not have is left empty and rendered as a dash; nothing is guessed or padded.",
+      "Every search can be exported to CSV or Excel, or saved into a shared Google Sheet as an upsert keyed on the Map URL, so repeated searches enrich the sheet instead of duplicating it.",
+      "A built-in Detect Competitor step crawls each practice's public website and names the practice-management (PMS) or patient-engagement vendor it links to, by matching link, form, iframe, script and redirect hosts against a curated list of 32 vendors such as Dentrix, Eaglesoft, Open Dental, Denticon, Weave, NexHealth and RevenueWell. The result fills a Competitor column in the table, the exports and the sheet: a vendor name, a comma-joined list, “No Competitor” when the site was inspected and nothing matched, or empty when the site could not be inspected.",
+    ],
+    category: "lead-generation",
+    status: "active",
+    icon: "map-pinned",
+    runsOn: "Vercel",
+    lastUpdated: "2026-09-14",
+    liveUrl: "https://dentist-finder-pms.vercel.app",
+    githubUrl: "https://github.com/nikhil-pbn/dentist-finder",
+    resources: [
+      {
+        label: "README",
+        href: "https://github.com/nikhil-pbn/dentist-finder#readme",
+        description: "Setup, providers, exports and known limitations",
+        kind: "docs",
+      },
+      {
+        label: "Competitor detection guide",
+        href: "https://github.com/nikhil-pbn/dentist-finder/blob/master/docs/competitor-detection.md",
+        description: "How vendor matching works and what each note means",
+        kind: "docs",
+      },
+    ],
+    source: {
+      summary: "OpenStreetMap (Nominatim + Overpass), optionally Google Places",
+      details: [
+        "Nominatim geocodes the ZIP code to coordinates (one request per second at most)",
+        "Overpass API returns amenity=dentist nodes, ways and relations within the radius",
+        "Google Geocoding and Places (New) Text Search when MAP_PROVIDER is set to google",
+      ],
+    },
+    destination: {
+      summary: "CSV, Excel and Google Sheets",
+      details: [
+        "CSV download named dentists-<zip>-<km>km.csv",
+        "Excel .xlsx download written without a spreadsheet library",
+        "Upsert into a Google Sheet, one tab per provider (osm / google), keyed on Map URL",
+      ],
+    },
+    keyData: ["Name", "Address", "Phone", "Email", "Website", "Map URL", "Competitor"],
+    input: [
+      { label: "ZIP code", description: "5-digit US ZIP; ZIP+4 is accepted and truncated." },
+      { label: "Results", description: "20, 30, 50 dentists or All (no limit). Default 20." },
+      { label: "Search radius", description: "5, 10, 15, 25 or 50 km. Default 15 km." },
+      {
+        label: "Only show dentists that have a website",
+        description: "Checkbox, on by default. Narrows results heavily.",
+      },
+    ],
+    dataCollected: [
+      { name: "Name" },
+      { name: "Address", description: "Full and short forms" },
+      { name: "Phone" },
+      { name: "Email", description: "OpenStreetMap only, roughly a third of practices with a website" },
+      { name: "Website" },
+      { name: "Latitude / Longitude" },
+      { name: "Distance", description: "Straight-line kilometres from the ZIP centre" },
+      { name: "Map URL", description: "OpenStreetMap or Google Maps link; the upsert key" },
+      { name: "Opening hours" },
+      { name: "Open now", description: "Google provider only" },
+      { name: "Rating / Reviews", description: "Google provider only" },
+      { name: "Business status", description: "Google provider only" },
+      { name: "Search ZIP", description: "The ZIP that was searched, kept from first sighting" },
+      {
+        name: "Competitor",
+        description: "Vendor named by the Detect Competitor crawl, “No Competitor”, or empty when the site could not be inspected",
+      },
+      { name: "Source", description: "osm or google" },
+    ],
+    howItWorks: [
+      {
+        title: "Enter a ZIP, result count and radius",
+        description: "The form checks the ZIP shape immediately for fast feedback.",
+      },
+      {
+        title: "Browser calls the search API",
+        description:
+          "The route enforces a per-IP budget of 20 requests per minute and re-validates every parameter; bad values get a 400, never a silent fix.",
+      },
+      {
+        title: "Geocode the ZIP",
+        description: "Nominatim (or Google Geocoding) turns the ZIP into a latitude and longitude.",
+      },
+      {
+        title: "Fetch dentist places",
+        description:
+          "Overpass (or Places Text Search) returns every dentist within the radius, with retries, backoff and endpoint failover.",
+      },
+      {
+        title: "Normalise, de-duplicate, sort",
+        description:
+          "Records become one Dentist model, duplicates within 50 m with the same name are merged, and results sort nearest-first.",
+      },
+      {
+        title: "Render and export",
+        description:
+          "The table shows 20 per page; exports and sheet saves always cover every result of the search.",
+      },
+      {
+        title: "Optionally detect competitors",
+        description:
+          "Detect Competitor crawls each practice website in batches of 10 (honouring robots.txt, HTML only) and fills the Competitor column live; only known vendor names can be saved to the sheet.",
+      },
+    ],
+    output: [
+      "A paginated results table with Dentist, Address, Phone, Email, Website, Map and Competitor columns, cards on mobile, and a summary line such as “Centred on Irvine, CA 92618 · 20 dentists found”.",
+      "Exports share one column set per provider. OpenStreetMap: Name, Address, Phone, Email, Website, Map URL, Search ZIP, Competitor. Google adds Rating, Reviews, Open Now and Business Status.",
+      "Saving to Google Sheets is an upsert keyed on Map URL: new practices are appended, changed cells rewritten, blanks never overwrite existing values and nothing is deleted.",
+    ],
+    technologies: [
+      { name: "Next.js 16", kind: "framework" },
+      { name: "React 19", kind: "framework" },
+      { name: "TypeScript", kind: "language" },
+      { name: "Tailwind CSS v4", kind: "library" },
+      { name: "shadcn/ui", kind: "library" },
+      { name: "Nominatim", kind: "api" },
+      { name: "Overpass API", kind: "api" },
+      { name: "Google Places API (New)", kind: "api" },
+      { name: "Google Sheets API", kind: "api" },
+      { name: "Google Drive API", kind: "api" },
+      { name: "Vercel", kind: "infra" },
+      { name: "Service-account JWT via node:crypto", kind: "technique" },
+    ],
+    exampleOutputs: [
+      {
+        title: "CSV export (OpenStreetMap provider)",
+        caption:
+          "Column order exactly as exported. The row is the project's own test fixture, not a real practice.",
+        columns: ["Name", "Address", "Phone", "Email", "Website", "Map URL", "Search ZIP", "Competitor"],
+        rows: [
+          [
+            "Irvine Family Dental",
+            "123 Main St, Irvine, CA 92618",
+            "+1 949-555-0100",
+            "example@email.com",
+            "https://example.com/",
+            "https://www.openstreetmap.org/node/1",
+            "92618",
+            "",
+          ],
+        ],
+      },
+    ],
+    limitations: [
+      "OpenStreetMap is community-maintained and incomplete. Fewer results than requested is normal and nothing is padded or invented.",
+      "The public Overpass endpoint fails roughly one request in three under load. The app retries up to three times with backoff inside a 50 s budget and can fail over to another endpoint.",
+      "Rate limited to 20 searches per minute per client IP. Nominatim is throttled to about one request per second.",
+      "Email coverage is roughly one third of OpenStreetMap dentists that list a website. Emails are never inferred.",
+      "The Google provider caps at 60 results, never returns emails, and bills every uncached search.",
+      "Caches and rate-limit counters live per process, so hit rates drop on serverless deployments.",
+      "Distances are straight-line (Haversine), not driving distance. ZIP geocoding accuracy is OpenStreetMap's.",
+      "Provider attribution (OpenStreetMap ODbL, “Powered by Google”) is not currently rendered and must be added before external use.",
+      "Competitor detection is URL-host matching only: a vendor's marketing link counts, links rendered by JavaScript are not seen, and an empty cell is not “No Competitor”. The scan lives in the browser tab, so save or export before reloading.",
+    ],
+  },
+
+  {
     slug: "reddit-monitor",
     name: "Reddit Monitor",
     tagline:
@@ -488,8 +367,9 @@ export const scrapers: Scraper[] = [
     category: "monitoring",
     status: "active",
     icon: "messages-square",
-    runsOn: "Local · Next.js",
+    runsOn: "Vercel",
     lastUpdated: "2026-09-22",
+    liveUrl: "https://reddit-monitoring-tool.vercel.app/",
     githubUrl: "https://github.com/nikhil-pbn/reddit-monitoring-tool",
     githubPrivate: true,
     source: {
@@ -618,8 +498,9 @@ export const scrapers: Scraper[] = [
     category: "seo",
     status: "prototype",
     icon: "search",
-    runsOn: "Local · Next.js",
+    runsOn: "Vercel",
     lastUpdated: "2026-07-17",
+    liveUrl: "https://ahref-web-scrapper.vercel.app/",
     githubUrl: "https://github.com/nikhil-pbn/Ahref-Web-Scrapper",
     source: {
       summary: "Ahrefs API v3",

@@ -5,12 +5,17 @@ import { Container } from "@/components/layout/container";
 import { GitHubIcon } from "@/components/layout/github-icon";
 import { LogoMark } from "@/components/layout/logo";
 import { CATEGORIES } from "@/data/categories";
+import { getAllScrapers } from "@/lib/scrapers";
 import { site } from "@/lib/site";
 
 const STACK = ["Next.js", "TypeScript", "Tailwind CSS", "shadcn/ui", "Framer Motion"];
 
 export function Footer() {
   const year = new Date().getFullYear();
+  const usedCategories = new Set(getAllScrapers().map((scraper) => scraper.category));
+  const categories = Object.entries(CATEGORIES).filter(([key]) =>
+    usedCategories.has(key as keyof typeof CATEGORIES),
+  );
 
   return (
     <footer className="mt-24 border-t border-border/60 bg-muted/20">
@@ -42,8 +47,8 @@ export function Footer() {
                   All scrapers
                 </Link>
               </li>
-              {Object.values(CATEGORIES).map((category) => (
-                <li key={category.label}>
+              {categories.map(([key, category]) => (
+                <li key={key}>
                   <Link
                     href="/#scrapers"
                     className="text-foreground/80 transition-colors hover:text-foreground"

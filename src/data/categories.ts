@@ -136,7 +136,7 @@ export const STATUSES: Record<ScraperStatus, StatusMeta> = {
   },
   prototype: {
     label: "Prototype",
-    description: "Functional build that runs locally and is not yet hardened.",
+    description: "Functional build, not yet hardened for regular use.",
     tone: "sky",
   },
   deprecated: {

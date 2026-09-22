@@ -19,6 +19,9 @@ import { CATEGORIES } from "@/data/categories";
 import { getAdjacentScrapers, getAllScrapers, getScraperBySlug } from "@/lib/scrapers";
 import type { Scraper } from "@/lib/types";
 
+/** Every slug is known at build time, so unknown slugs get a real 404 instead of a soft one. */
+export const dynamicParams = false;
+
 export function generateStaticParams() {
   return getAllScrapers().map((scraper) => ({ slug: scraper.slug }));
 }
