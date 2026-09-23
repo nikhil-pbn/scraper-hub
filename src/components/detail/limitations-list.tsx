@@ -2,7 +2,7 @@ import { TriangleAlert } from "lucide-react";
 
 export function LimitationsList({ items }: { items: string[] }) {
   return (
-    <ul className="grid gap-2.5">
+    <ul className="grid grid-cols-1 gap-2.5">
       {items.map((item) => (
         <li
           key={item}

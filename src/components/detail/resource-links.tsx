@@ -39,12 +39,12 @@ export function collectLinks(scraper: Scraper): ResourceLink[] {
 
 export function ResourceLinks({ links }: { links: ResourceLink[] }) {
   return (
-    <ul className="grid gap-3 sm:grid-cols-2">
+    <ul className="grid grid-cols-1 gap-3 sm:grid-cols-2">
       {links.map((link) => {
         const Icon = ICONS[link.kind ?? "other"];
         const isPrivate = link.kind === "github" && link.label.includes("private");
         return (
-          <li key={link.href}>
+          <li key={link.href} className="min-w-0">
             <a
               href={link.href}
               target="_blank"

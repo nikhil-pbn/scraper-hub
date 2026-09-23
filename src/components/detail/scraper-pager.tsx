@@ -45,7 +45,7 @@ export function ScraperPager({
 }) {
   if (!previous && !next) return null;
   return (
-    <nav aria-label="More scrapers" className="grid gap-4 sm:grid-cols-2">
+    <nav aria-label="More scrapers" className="grid grid-cols-1 gap-4 sm:grid-cols-2">
       {previous ? <PagerLink scraper={previous} direction="previous" /> : null}
       {next ? <PagerLink scraper={next} direction="next" /> : null}
     </nav>

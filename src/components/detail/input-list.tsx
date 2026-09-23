@@ -4,7 +4,7 @@ import type { InputField } from "@/lib/types";
 
 export function InputList({ fields }: { fields: InputField[] }) {
   return (
-    <ul className="grid gap-3 sm:grid-cols-2">
+    <ul className="grid grid-cols-1 gap-3 sm:grid-cols-2">
       {fields.map((field) => (
         <li
           key={field.label}

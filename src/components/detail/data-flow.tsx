@@ -51,7 +51,7 @@ export function DataFlow({ scraper }: { scraper: Scraper }) {
   const tone = TONES[CATEGORIES[scraper.category].tone];
 
   return (
-    <div className="grid gap-3 lg:grid-cols-[minmax(0,1fr)_auto_auto_auto_minmax(0,1fr)] lg:items-stretch">
+    <div className="grid grid-cols-1 gap-3 lg:grid-cols-[minmax(0,1fr)_auto_auto_auto_minmax(0,1fr)] lg:items-stretch">
       <FlowCard
         eyebrow="Data source"
         icon={Database}
@@ -64,7 +64,7 @@ export function DataFlow({ scraper }: { scraper: Scraper }) {
           <span className="flex size-11 items-center justify-center rounded-xl border bg-card shadow-xs">
             <ScraperIcon icon={scraper.icon} className={cn("size-5", tone.icon)} />
           </span>
-          <span className="max-w-[9rem] text-xs font-medium leading-tight">{scraper.name}</span>
+          <span className="max-w-36 text-xs font-medium leading-tight">{scraper.name}</span>
         </div>
       </div>
       <Connector />

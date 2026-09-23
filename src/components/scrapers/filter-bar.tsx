@@ -67,6 +67,8 @@ type Props = {
   onStatusChange: (value: StatusFilter) => void;
   categoryCounts: Record<CategoryFilter, number>;
   statusCounts: Record<StatusFilter, number>;
+  /** Hide the status row when every scraper shares one status. */
+  showStatus?: boolean;
 };
 
 export function FilterBar({
@@ -76,6 +78,7 @@ export function FilterBar({
   onStatusChange,
   categoryCounts,
   statusCounts,
+  showStatus = true,
 }: Props) {
   return (
     <LayoutGroup id="scraper-filters">
@@ -107,6 +110,7 @@ export function FilterBar({
           ))}
         </div>
 
+        {showStatus ? (
         <div
           role="group"
           aria-label="Filter by status"
@@ -135,6 +139,7 @@ export function FilterBar({
             </Pill>
           ))}
         </div>
+        ) : null}
       </div>
     </LayoutGroup>
   );

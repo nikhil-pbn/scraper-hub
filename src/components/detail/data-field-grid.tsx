@@ -25,7 +25,7 @@ export function DataFieldGrid({ fields }: { fields: DataField[] }) {
               <span className="tabular-nums">{items.length}</span>
             </h3>
           ) : null}
-          <ul className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
+          <ul className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3">
             {items.map((field) => (
               <li
                 key={field.name}

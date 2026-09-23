@@ -36,6 +36,8 @@ export function ScraperExplorer({ scrapers }: { scrapers: Scraper[] }) {
   );
 
   const filtered = query !== "" || category !== "all" || status !== "all";
+  // A status filter is only useful when the library spans more than one status.
+  const distinctStatuses = new Set(scrapers.map((scraper) => scraper.status)).size;
 
   function reset() {
     setQuery("");
@@ -56,6 +58,7 @@ export function ScraperExplorer({ scrapers }: { scrapers: Scraper[] }) {
               onStatusChange={setStatus}
               categoryCounts={categoryCounts}
               statusCounts={statusCounts}
+              showStatus={distinctStatuses > 1}
             />
           </div>
         </div>

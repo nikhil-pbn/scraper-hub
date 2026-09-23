@@ -18,7 +18,7 @@ export function TechStack({ technologies }: { technologies: Technology[] }) {
   })).filter((group) => group.items.length > 0);
 
   return (
-    <dl className="grid gap-x-8 gap-y-5 sm:grid-cols-2">
+    <dl className="grid grid-cols-1 gap-x-8 gap-y-5 sm:grid-cols-2">
       {groups.map((group) => (
         <div key={group.kind}>
           <dt className="font-mono text-[11px] font-medium tracking-wider text-muted-foreground uppercase">
