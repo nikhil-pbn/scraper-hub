@@ -120,6 +120,4 @@ export type Project = {
   kind: ProjectKind;
   stack?: string[];
   liveUrl?: string;
-  /** ISO date (YYYY-MM-DD) of the last meaningful change. */
-  lastUpdated?: string;
 };

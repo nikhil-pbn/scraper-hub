@@ -26,7 +26,6 @@ export const projects: Project[] = [
       "HubSpot CRM",
     ],
     liveUrl: "https://sales.practicenumbers.com/",
-    lastUpdated: "2026-09-14",
   },
   {
     slug: "pbn-prospects",
@@ -45,7 +44,6 @@ export const projects: Project[] = [
       "AWS EC2",
     ],
     liveUrl: "https://sdr-prospect.practicenumbers.com/",
-    lastUpdated: "2026-09-17",
   },
   {
     slug: "marketing-scorecard",
@@ -55,6 +53,5 @@ export const projects: Project[] = [
     kind: "dashboard",
     stack: ["Next.js 16", "TypeScript", "Tailwind CSS v4", "ExcelJS", "Google Drive API", "Recharts"],
     liveUrl: "https://pbn-marketing-scorecard.vercel.app/",
-    lastUpdated: "2026-09-21",
   },
 ];

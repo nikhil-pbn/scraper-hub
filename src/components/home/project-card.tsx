@@ -2,7 +2,7 @@ import { ArrowUpRight, Gauge, Globe, Wrench, type LucideProps } from "lucide-rea
 
 import { Button } from "@/components/ui/button";
 import { PROJECT_KINDS_META, TONES } from "@/data/categories";
-import { formatDate, hostname } from "@/lib/scrapers";
+import { hostname } from "@/lib/scrapers";
 import type { Project, ProjectKind } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
@@ -79,11 +79,6 @@ export function ProjectCard({ project }: { project: Project }) {
         ) : (
           <span className="text-xs text-muted-foreground">No public link yet</span>
         )}
-        {project.lastUpdated ? (
-          <span className="font-mono text-[11px] text-muted-foreground tabular-nums">
-            {formatDate(project.lastUpdated)}
-          </span>
-        ) : null}
       </div>
     </article>
   );
