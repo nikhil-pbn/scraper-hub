@@ -1,8 +1,7 @@
-import { ArrowDown, ArrowUpRight } from "lucide-react";
+import { ArrowDown } from "lucide-react";
 
 import { HeroPanel } from "@/components/home/hero-panel";
 import { Container } from "@/components/layout/container";
-import { GitHubIcon } from "@/components/layout/github-icon";
 import { Reveal } from "@/components/motion/reveal";
 import { Button } from "@/components/ui/button";
 import { getHubStats } from "@/lib/scrapers";
@@ -15,7 +14,7 @@ export function Hero({ scrapers }: { scrapers: Scraper[] }) {
   return (
     <section className="relative overflow-hidden border-b border-border/60">
       <div className="absolute inset-0 -z-10 bg-grid opacity-[0.35] mask-fade-b" />
-      <div className="absolute -top-32 left-1/2 -z-10 h-[420px] w-[820px] -translate-x-1/2 rounded-full bg-brand/20 blur-3xl dark:bg-brand/15" />
+      <div className="absolute -top-32 left-1/2 -z-10 h-105 w-205 -translate-x-1/2 rounded-full bg-brand/20 blur-3xl dark:bg-brand/15" />
       <div className="absolute top-24 right-[-10%] -z-10 hidden h-72 w-72 rounded-full bg-violet-500/15 blur-3xl lg:block" />
 
       <Container className="py-16 sm:py-20 lg:py-24">
@@ -60,11 +59,7 @@ export function Hero({ scrapers }: { scrapers: Scraper[] }) {
                   </a>
                 </Button>
                 <Button asChild size="lg" variant="outline" className="h-10 px-4">
-                  <a href={site.github} target="_blank" rel="noreferrer">
-                    <GitHubIcon />
-                    GitHub
-                    <ArrowUpRight className="size-3.5 opacity-60" />
-                  </a>
+                  <a href="#projects">More projects</a>
                 </Button>
               </div>
             </Reveal>

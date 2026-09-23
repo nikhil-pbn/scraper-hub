@@ -48,7 +48,9 @@ Set `NEXT_PUBLIC_SITE_URL` (see `.env.example`) so canonical URLs, the sitemap a
 
 ## Adding a non-scraper project
 
-Internal tools and dashboards live in the lighter "More projects" section on the home page (marketing websites are deliberately left out). Append a `Project` object to `src/data/projects.ts` (name, one-line description, `kind`, optional stack, `liveUrl`, `repoUrl`). There is no detail page for these on purpose.
+Internal tools and dashboards live in the lighter "More projects" section on the home page (marketing websites are deliberately left out). Append a `Project` object to `src/data/projects.ts` (name, one-line description, `kind`, optional stack, `liveUrl`). There is no detail page for these on purpose.
+
+Repository and GitHub links are intentionally not shown anywhere; the hub is about the live tools.
 
 ## Project layout
 

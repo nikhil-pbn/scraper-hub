@@ -34,7 +34,7 @@ export type ResourceLink = {
   href: string;
   /** Short hint shown under the label, for example "Engineering guide". */
   description?: string;
-  kind?: "live" | "github" | "docs" | "sheet" | "other";
+  kind?: "live" | "docs" | "sheet" | "other";
 };
 
 export type InputField = {
@@ -88,9 +88,7 @@ export type Scraper = {
   lastUpdated?: string;
 
   liveUrl?: string;
-  githubUrl?: string;
-  /** Private repositories return 404 to anonymous visitors; flag them so the UI can say so. */
-  githubPrivate?: boolean;
+  /** Extra links such as public documentation. Repository links are intentionally not shown. */
   resources?: ResourceLink[];
 
   source: { summary: string; details?: string[] };
@@ -122,11 +120,6 @@ export type Project = {
   kind: ProjectKind;
   stack?: string[];
   liveUrl?: string;
-  repoUrl?: string;
-  /** Host label when the repository is not on GitHub, for example "Bitbucket". */
-  repoLabel?: string;
-  /** Private repositories return 404 to anonymous visitors; flag them so the UI can say so. */
-  repoPrivate?: boolean;
   /** ISO date (YYYY-MM-DD) of the last meaningful change. */
   lastUpdated?: string;
 };

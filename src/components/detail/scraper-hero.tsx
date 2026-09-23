@@ -1,8 +1,7 @@
 import Link from "next/link";
-import { ArrowLeft, ArrowUpRight, BookOpen, Lock } from "lucide-react";
+import { ArrowLeft, ArrowUpRight, BookOpen } from "lucide-react";
 
 import { Container } from "@/components/layout/container";
-import { GitHubIcon } from "@/components/layout/github-icon";
 import { Reveal } from "@/components/motion/reveal";
 import { CategoryBadge } from "@/components/scrapers/category-badge";
 import { ScraperVisual } from "@/components/scrapers/scraper-visual";
@@ -32,7 +31,7 @@ export function ScraperHero({ scraper }: { scraper: Scraper }) {
       <div className="absolute inset-0 -z-10 bg-grid opacity-[0.3] mask-fade-b" />
       <div
         className={cn(
-          "absolute -top-40 left-1/2 -z-10 h-[460px] w-[760px] -translate-x-1/2 rounded-full opacity-40 blur-3xl",
+          "absolute -top-40 left-1/2 -z-10 h-115 w-190 -translate-x-1/2 rounded-full opacity-40 blur-3xl",
           tone.glow,
         )}
       />
@@ -79,26 +78,8 @@ export function ScraperHero({ scraper }: { scraper: Scraper }) {
                     </a>
                   </Button>
                 ) : null}
-                {scraper.githubUrl ? (
-                  <Button asChild size="lg" variant="outline" className="h-10 px-4">
-                    <a
-                      href={scraper.githubUrl}
-                      target="_blank"
-                      rel="noreferrer"
-                      title={scraper.githubPrivate ? "Private repository, requires access" : undefined}
-                    >
-                      <GitHubIcon />
-                      GitHub
-                      {scraper.githubPrivate ? (
-                        <Lock className="size-3.5 opacity-60" aria-label="Private repository" />
-                      ) : (
-                        <ArrowUpRight className="size-3.5 opacity-60" />
-                      )}
-                    </a>
-                  </Button>
-                ) : null}
                 {docs ? (
-                  <Button asChild size="lg" variant="ghost" className="h-10 px-4">
+                  <Button asChild size="lg" variant="outline" className="h-10 px-4">
                     <a href={docs.href} target="_blank" rel="noreferrer">
                       <BookOpen className="size-4" />
                       {docs.label}
@@ -134,7 +115,7 @@ export function ScraperHero({ scraper }: { scraper: Scraper }) {
                   tone.glow,
                 )}
               />
-              <div className="relative aspect-[16/10] overflow-hidden rounded-2xl border shadow-2xl shadow-black/10 lg:aspect-[4/3] dark:shadow-black/40">
+              <div className="relative aspect-16/10 overflow-hidden rounded-2xl border shadow-2xl shadow-black/10 lg:aspect-4/3 dark:shadow-black/40">
                 <ScraperVisual scraper={scraper} variant="hero" />
               </div>
             </div>

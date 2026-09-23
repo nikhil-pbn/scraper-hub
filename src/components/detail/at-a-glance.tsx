@@ -1,4 +1,4 @@
-import { ArrowUpRight, Lock } from "lucide-react";
+import { ArrowUpRight } from "lucide-react";
 
 import { CategoryBadge } from "@/components/scrapers/category-badge";
 import { StatusBadge } from "@/components/scrapers/status-badge";
@@ -57,26 +57,6 @@ export function AtAGlance({
                 >
                   {hostname(scraper.liveUrl)}
                   <ArrowUpRight className="size-3.5" />
-                </a>
-              </dd>
-            </div>
-          ) : null}
-          {scraper.githubUrl ? (
-            <div className="flex items-start justify-between gap-3">
-              <dt className="text-muted-foreground">Code</dt>
-              <dd>
-                <a
-                  href={scraper.githubUrl}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="inline-flex items-center gap-1 font-medium text-brand hover:underline"
-                >
-                  GitHub
-                  {scraper.githubPrivate ? (
-                    <Lock className="size-3" aria-label="Private repository" />
-                  ) : (
-                    <ArrowUpRight className="size-3.5" />
-                  )}
                 </a>
               </dd>
             </div>

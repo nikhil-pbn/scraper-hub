@@ -22,7 +22,7 @@ export default function Loading() {
               </div>
               <Skeleton className="mt-9 h-20 w-full rounded-2xl" />
             </div>
-            <Skeleton className="aspect-[16/10] w-full rounded-2xl lg:aspect-[4/3]" />
+            <Skeleton className="aspect-16/10 w-full rounded-2xl lg:aspect-4/3" />
           </div>
         </Container>
       </section>

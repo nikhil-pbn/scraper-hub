@@ -1,18 +1,16 @@
-import { ArrowUpRight, BookOpen, FileSpreadsheet, Globe, Link2, Lock, type LucideProps } from "lucide-react";
+import { ArrowUpRight, BookOpen, FileSpreadsheet, Globe, Link2, type LucideProps } from "lucide-react";
 
-import { GitHubIcon } from "@/components/layout/github-icon";
 import { hostname } from "@/lib/scrapers";
 import type { ResourceLink, Scraper } from "@/lib/types";
 
 const ICONS: Record<NonNullable<ResourceLink["kind"]>, React.ComponentType<LucideProps>> = {
   live: Globe,
-  github: GitHubIcon as React.ComponentType<LucideProps>,
   docs: BookOpen,
   sheet: FileSpreadsheet,
   other: Link2,
 };
 
-/** Flattens live URL, repository and extra resources into one list. */
+/** Flattens the live URL and any extra resources into one list. */
 export function collectLinks(scraper: Scraper): ResourceLink[] {
   const links: ResourceLink[] = [];
   if (scraper.liveUrl) {
@@ -21,16 +19,6 @@ export function collectLinks(scraper: Scraper): ResourceLink[] {
       href: scraper.liveUrl,
       description: hostname(scraper.liveUrl),
       kind: "live",
-    });
-  }
-  if (scraper.githubUrl) {
-    links.push({
-      label: scraper.githubPrivate ? "GitHub repository (private)" : "GitHub repository",
-      href: scraper.githubUrl,
-      description: scraper.githubPrivate
-        ? "Requires access to the repository"
-        : scraper.githubUrl.replace(/^https?:\/\/github\.com\//, ""),
-      kind: "github",
     });
   }
   for (const link of scraper.resources ?? []) links.push({ kind: "other", ...link });
@@ -42,7 +30,6 @@ export function ResourceLinks({ links }: { links: ResourceLink[] }) {
     <ul className="grid grid-cols-1 gap-3 sm:grid-cols-2">
       {links.map((link) => {
         const Icon = ICONS[link.kind ?? "other"];
-        const isPrivate = link.kind === "github" && link.label.includes("private");
         return (
           <li key={link.href} className="min-w-0">
             <a
@@ -55,10 +42,7 @@ export function ResourceLinks({ links }: { links: ResourceLink[] }) {
                 <Icon className="size-4" />
               </span>
               <span className="min-w-0 flex-1">
-                <span className="flex items-center gap-1.5 text-sm font-medium">
-                  {link.label}
-                  {isPrivate ? <Lock className="size-3 text-muted-foreground" /> : null}
-                </span>
+                <span className="block text-sm font-medium">{link.label}</span>
                 {link.description ? (
                   <span className="mt-0.5 block truncate text-xs text-muted-foreground">
                     {link.description}

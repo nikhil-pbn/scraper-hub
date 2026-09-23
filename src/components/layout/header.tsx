@@ -3,9 +3,8 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
-import { ArrowUpRight, Menu } from "lucide-react";
+import { Menu } from "lucide-react";
 
-import { GitHubIcon } from "@/components/layout/github-icon";
 import { LogoMark } from "@/components/layout/logo";
 import { ThemeToggle } from "@/components/layout/theme-toggle";
 import { Button } from "@/components/ui/button";
@@ -61,16 +60,6 @@ export function Header() {
               </Link>
             );
           })}
-          <a
-            href={site.github}
-            target="_blank"
-            rel="noreferrer"
-            className="inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm font-medium text-muted-foreground transition-colors outline-none hover:bg-muted/70 hover:text-foreground focus-visible:ring-3 focus-visible:ring-ring/50"
-          >
-            <GitHubIcon />
-            GitHub
-            <ArrowUpRight className="size-3.5 opacity-60" />
-          </a>
         </nav>
 
         <div className="flex items-center gap-1">
@@ -110,17 +99,6 @@ export function Header() {
                     {item.label}
                   </Link>
                 ))}
-                <a
-                  href={site.github}
-                  target="_blank"
-                  rel="noreferrer"
-                  onClick={() => setOpen(false)}
-                  className="inline-flex items-center gap-2 rounded-lg px-3 py-2.5 text-sm font-medium text-muted-foreground transition-colors outline-none hover:bg-muted/70 hover:text-foreground focus-visible:ring-3 focus-visible:ring-ring/50"
-                >
-                  <GitHubIcon />
-                  GitHub
-                  <ArrowUpRight className="size-3.5 opacity-60" />
-                </a>
               </nav>
             </SheetContent>
           </Sheet>

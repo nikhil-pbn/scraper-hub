@@ -26,21 +26,6 @@ export const scrapers: Scraper[] = [
     runsOn: "Vercel",
     lastUpdated: "2026-08-18",
     liveUrl: "https://ahref-referring-domains.vercel.app/",
-    githubUrl: "https://github.com/nikhil-pbn/competitors-scrapper",
-    resources: [
-      {
-        label: "How it works",
-        href: "https://github.com/nikhil-pbn/competitors-scrapper/blob/master/HOW-IT-WORKS.md",
-        description: "Engineering map of the three phases",
-        kind: "docs",
-      },
-      {
-        label: "README",
-        href: "https://github.com/nikhil-pbn/competitors-scrapper#readme",
-        description: "Non-technical user guide",
-        kind: "docs",
-      },
-    ],
     source: {
       summary: "Ahrefs API v3 referring domains, then each linking website",
       details: [
@@ -206,21 +191,6 @@ export const scrapers: Scraper[] = [
     runsOn: "Vercel",
     lastUpdated: "2026-09-14",
     liveUrl: "https://dentist-finder-pms.vercel.app",
-    githubUrl: "https://github.com/nikhil-pbn/dentist-finder",
-    resources: [
-      {
-        label: "README",
-        href: "https://github.com/nikhil-pbn/dentist-finder#readme",
-        description: "Setup, providers, exports and known limitations",
-        kind: "docs",
-      },
-      {
-        label: "Competitor detection guide",
-        href: "https://github.com/nikhil-pbn/dentist-finder/blob/master/docs/competitor-detection.md",
-        description: "How vendor matching works and what each note means",
-        kind: "docs",
-      },
-    ],
     source: {
       summary: "OpenStreetMap (Nominatim + Overpass), optionally Google Places",
       details: [
@@ -370,8 +340,6 @@ export const scrapers: Scraper[] = [
     runsOn: "Vercel",
     lastUpdated: "2026-09-22",
     liveUrl: "https://reddit-monitoring-tool.vercel.app/",
-    githubUrl: "https://github.com/nikhil-pbn/reddit-monitoring-tool",
-    githubPrivate: true,
     source: {
       summary: "Arctic Shift Reddit archive (no API key)",
       details: [

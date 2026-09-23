@@ -25,7 +25,7 @@ export default function Image() {
           </div>
           <div style={{ fontSize: 30, color: "rgba(244,244,246,0.7)", lineHeight: 1.35, maxWidth: 960 }}>
             Explore, understand and access every scraper: what it collects, where the data goes,
-            and where to find the live tool and code.
+            and where to find the live tool.
           </div>
         </div>
 

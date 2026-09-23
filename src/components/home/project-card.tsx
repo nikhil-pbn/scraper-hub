@@ -1,6 +1,5 @@
-import { ArrowUpRight, Gauge, Globe, Link2, Lock, Wrench, type LucideProps } from "lucide-react";
+import { ArrowUpRight, Gauge, Globe, Wrench, type LucideProps } from "lucide-react";
 
-import { GitHubIcon } from "@/components/layout/github-icon";
 import { Button } from "@/components/ui/button";
 import { PROJECT_KINDS_META, TONES } from "@/data/categories";
 import { formatDate, hostname } from "@/lib/scrapers";
@@ -19,8 +18,6 @@ export function ProjectCard({ project }: { project: Project }) {
   const meta = PROJECT_KINDS_META[project.kind];
   const tone = TONES[meta.tone];
   const Icon = KIND_ICONS[project.kind];
-  const isGitHub = project.repoUrl?.includes("github.com");
-  const repoLabel = project.repoLabel ?? (isGitHub ? "GitHub" : "Repository");
   const extraStack = (project.stack?.length ?? 0) - MAX_STACK;
 
   return (
@@ -71,38 +68,17 @@ export function ProjectCard({ project }: { project: Project }) {
       ) : null}
 
       <div className="mt-auto flex flex-wrap items-center justify-between gap-3 pt-1">
-        <div className="flex flex-wrap items-center gap-2">
-          {project.liveUrl ? (
-            <Button asChild size="sm" className="gap-1">
-              <a href={project.liveUrl} target="_blank" rel="noreferrer">
-                Live
-                <ArrowUpRight className="size-3.5" />
-                <span className="sr-only">(opens {hostname(project.liveUrl)} in a new tab)</span>
-              </a>
-            </Button>
-          ) : null}
-          {project.repoUrl ? (
-            <Button asChild size="sm" variant="outline" className="gap-1.5">
-              <a
-                href={project.repoUrl}
-                target="_blank"
-                rel="noreferrer"
-                title={project.repoPrivate ? "Private repository, requires access" : undefined}
-              >
-                {isGitHub ? <GitHubIcon className="size-3.5" /> : <Link2 className="size-3.5" />}
-                {repoLabel}
-                {project.repoPrivate ? (
-                  <Lock className="size-3 opacity-60" aria-label="Private repository" />
-                ) : (
-                  <ArrowUpRight className="size-3 opacity-60" />
-                )}
-              </a>
-            </Button>
-          ) : null}
-          {!project.liveUrl && !project.repoUrl ? (
-            <span className="text-xs text-muted-foreground">No public link yet</span>
-          ) : null}
-        </div>
+        {project.liveUrl ? (
+          <Button asChild size="sm" className="gap-1">
+            <a href={project.liveUrl} target="_blank" rel="noreferrer">
+              Live
+              <ArrowUpRight className="size-3.5" />
+              <span className="sr-only">(opens {hostname(project.liveUrl)} in a new tab)</span>
+            </a>
+          </Button>
+        ) : (
+          <span className="text-xs text-muted-foreground">No public link yet</span>
+        )}
         {project.lastUpdated ? (
           <span className="font-mono text-[11px] text-muted-foreground tabular-nums">
             {formatDate(project.lastUpdated)}

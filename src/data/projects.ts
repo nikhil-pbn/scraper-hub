@@ -5,7 +5,7 @@ import type { Project } from "@/lib/types";
  *
  * Facts were taken from each project's README, metadata and git history on
  * 2026-09-22; live URLs were supplied by the owner and verified the same day.
- * Repositories that return 404 to anonymous visitors are marked `repoPrivate`.
+ * Repository links are intentionally not shown anywhere in the hub.
  */
 export const projects: Project[] = [
   {
@@ -26,8 +26,6 @@ export const projects: Project[] = [
       "HubSpot CRM",
     ],
     liveUrl: "https://sales.practicenumbers.com/",
-    repoUrl: "https://github.com/practicenumbers/pbn-sales-proposal",
-    repoPrivate: true,
     lastUpdated: "2026-09-14",
   },
   {
@@ -47,8 +45,6 @@ export const projects: Project[] = [
       "AWS EC2",
     ],
     liveUrl: "https://sdr-prospect.practicenumbers.com/",
-    repoUrl: "https://github.com/practicenumbers/pbn-sdr-prospect",
-    repoPrivate: true,
     lastUpdated: "2026-09-17",
   },
   {
@@ -59,8 +55,6 @@ export const projects: Project[] = [
     kind: "dashboard",
     stack: ["Next.js 16", "TypeScript", "Tailwind CSS v4", "ExcelJS", "Google Drive API", "Recharts"],
     liveUrl: "https://pbn-marketing-scorecard.vercel.app/",
-    repoUrl: "https://github.com/nikhil-pbn/pbn-marketing-scorecard",
-    repoPrivate: true,
     lastUpdated: "2026-09-21",
   },
 ];
