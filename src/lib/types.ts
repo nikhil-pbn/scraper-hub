@@ -27,7 +27,8 @@ export type ScraperIcon =
   | "waypoints"
   | "map-pin"
   | "database"
-  | "globe";
+  | "globe"
+  | "sparkles";
 
 export type ResourceLink = {
   label: string;

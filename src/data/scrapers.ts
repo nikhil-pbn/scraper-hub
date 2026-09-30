@@ -4,10 +4,11 @@ import type { Scraper } from "@/lib/types";
  * Every scraper shown in the hub, in display order.
  *
  * Facts below were taken from each project's source, README and git history on
- * 2026-09-22. Where something could not be verified it is left out rather than
- * guessed. To add a scraper, append an object here; the UI hides any section
- * whose data is missing. Drop a screenshot into /public and set `image` to
- * replace the generated placeholder art.
+ * 2026-09-22 (Dental Data Enricher on 2026-09-30). Where something could not be
+ * verified it is left out rather than guessed. To add a scraper, append an
+ * object here; the UI hides any section whose data is missing. Drop a
+ * screenshot into /public and set `image` to replace the generated placeholder
+ * art.
  */
 export const scrapers: Scraper[] = [
   {
@@ -450,6 +451,175 @@ export const scrapers: Scraper[] = [
       "Caps: 15 communities, 30 keywords, 100 characters per term, 2,000 rows per sheet save.",
       "Results are not persisted; every search refetches and resets filters and pagination.",
       "Email failure never fails a save. Rows are written first and the mail error is reported as a warning.",
+    ],
+  },
+
+  {
+    slug: "dental-data-enricher",
+    name: "Dental Data Enricher",
+    tagline:
+      "Upload an account list, find out which companies are real dental practices, and pull their public practice and contact details into an enriched CSV.",
+    description: [
+      "Dental Data Enricher takes a CSV of company accounts, classifies each website as Dental, Non-Dental, Unknown or Failed from what its pages actually say, crawls only the Dental websites for their contact, team, doctor, about, appointment and location pages, and exports the original rows with practice name, doctors, email, phone, address and ZIP appended.",
+      "Classification is rule-based keyword scoring over page text, title, headings, meta description and JSON-LD. The domain name is never treated as evidence and no AI model is involved. Businesses that serve dentists (suppliers, manufacturers, software, marketing agencies, schools) count as Non-Dental, dental support organizations count as Dental with a DSO reason, and anything inconclusive stays Unknown so a person can decide.",
+      "Nothing is fabricated: every extracted value keeps the pages it was found on, emails are never built from names, a doctor needs on-page evidence (\u201cDr.\u201d or a DDS/DMD credential next to the name, or structured data) and missing values stay empty. Crawling is polite and public-only: an honest user agent, robots.txt respected, private network addresses refused, and timeouts and size caps on every request. A blocked or broken site is recorded as Failed with the reason and never stops the batch.",
+    ],
+    category: "data-extraction",
+    status: "active",
+    icon: "sparkles",
+    runsOn: "Vercel",
+    lastUpdated: "2026-09-29",
+    liveUrl: "https://dental-website-data-enricher.vercel.app/",
+    source: {
+      summary: "Uploaded account CSV plus each company\u2019s public website",
+      details: [
+        "The website comes from the Account Domain column; Domain, Website, Website URL, Company Website, Company Domain or URL are offered as exact-name fallbacks, or a column can be picked by hand",
+        "Classification reads the homepage and, when inconclusive, one supporting page such as About, Services or Our Team",
+        "Enrichment fetches up to 10 prioritised internal pages per site, found via navigation, header, footer, in-page links, sitemap.xml and a few guessed paths",
+        "robots.txt is fetched and honoured for every page; hosts that resolve to private network addresses are refused",
+      ],
+    },
+    destination: {
+      summary: "Enriched CSV downloads, all rows or Dental only",
+      details: [
+        "dental-websites-enriched.csv: every imported row, with the added columns left empty for non-dental rows",
+        "dental-websites-enriched-dental-only.csv: only the rows classified as Dental",
+        "Nothing is stored on the server beyond a 10-minute in-memory page cache; results live in the browser session",
+      ],
+    },
+    keyData: ["Dental status", "Practice name", "Doctors", "Specialty", "Email", "Phone", "Address", "ZIP"],
+    input: [
+      {
+        label: "Account CSV",
+        description:
+          "Expected columns: Account Domain, Company Name, Company Industry, Company Employee Range, Company Annual Revenue, Last Activity, Account Activity URL. Extra columns are kept, missing ones are reported, and parse issues such as duplicate headers or ragged rows are listed on import.",
+      },
+      {
+        label: "Website column",
+        description:
+          "Account Domain by default. If it is missing, an exact-name fallback is offered for confirmation, otherwise you choose the column. Account Activity URL is never used as the website.",
+      },
+      {
+        label: "Company Name",
+        description: "Optional. Only used to choose between practice names a website shows.",
+      },
+    ],
+    dataCollected: [
+      { name: "Dental Status", description: "Dental, Non-Dental, Unknown or Failed", group: "Classification" },
+      { name: "Dental Confidence", description: "High, Medium or Low", group: "Classification" },
+      {
+        name: "Classification Reason",
+        description: "Plain-text evidence, e.g. the provider terms, services and patient cues matched",
+        group: "Classification",
+      },
+      { name: "Practice Name", group: "Practice" },
+      {
+        name: "Doctor Name",
+        description: "With credentials when shown, e.g. \u201cJane Doe, DDS\u201d; several doctors separated by \u201c; \u201d",
+        group: "Practice",
+      },
+      {
+        name: "Doctor Specialty",
+        description: "Practice-wide specialty when stated, otherwise the specialties named next to the doctors",
+        group: "Practice",
+      },
+      { name: "Appointment URL", group: "Practice" },
+      { name: "Email", group: "Contact" },
+      { name: "Phone", description: "First office number", group: "Contact" },
+      { name: "Additional Phones", description: "Further office numbers; toll-free numbers are labelled", group: "Contact" },
+      { name: "Fax", group: "Contact" },
+      { name: "Address", description: "Street", group: "Contact" },
+      { name: "City", group: "Contact" },
+      { name: "State", group: "Contact" },
+      { name: "ZIP", group: "Contact" },
+      {
+        name: "Doctor / Email / Phone / Address Source",
+        description: "The pages each value was found on",
+        group: "Provenance",
+      },
+      { name: "Source URL", description: "Pages that contributed at least one value", group: "Provenance" },
+      {
+        name: "Extraction Status",
+        description: "Completed, Partial, Failed, Skipped or Pending",
+        group: "Provenance",
+      },
+      { name: "Extraction Error", description: "Why a site failed, when it did", group: "Provenance" },
+    ],
+    howItWorks: [
+      {
+        title: "Import the CSV",
+        description:
+          "The file is parsed in the browser, the website column is detected or chosen, and the expected columns, extras and parse issues are summarised before anything runs.",
+      },
+      {
+        title: "Classify each website",
+        description:
+          "Six sites at a time, one request per unique domain, the browser posts each domain to the classify API. The server fetches the homepage (trying the https, www and http variants until one answers), scores its content, and pulls one supporting page when the result is inconclusive.",
+      },
+      {
+        title: "Crawl the Dental websites",
+        description:
+          "Four sites at a time, each crawl fetches the homepage, discovers internal pages from navigation, header, footer, links and the sitemap, and fetches a prioritised set: up to 2 contact, 2 team, 3 doctor, 1 about, 1 appointment and 1 locations page, 3 at a time, inside a 45-second budget and never more than 10 pages.",
+      },
+      {
+        title: "Extract practice details",
+        description:
+          "Pages are matched line by line so a name or address cannot run into the next heading. Values come from mailto and tel links, JSON-LD structured data and page text, are de-duplicated keeping the strongest evidence, and each keeps every page it appeared on.",
+      },
+      {
+        title: "Review, retry and export",
+        description:
+          "The results table shows every imported column plus the enrichment columns, filterable by status, with per-row details and the pages crawled. Stop, Resume and Retry cover interrupted or failed rows. Download all rows or Dental only.",
+      },
+    ],
+    output: [
+      "A results table with every imported column plus the enrichment columns: Dental Status, Confidence and Reason, Practice Name, Doctor Name, Doctor Specialty, Email, Phone, Additional Phones, Fax, Address, City, State, ZIP, Appointment URL, per-field Source columns, Extraction Status and Extraction Error.",
+      "Two CSV downloads, all rows or Dental only. Both keep every imported column unchanged and in its original order, then append Practice Name, Doctor Name, Email, Phone, Additional Phones, Address (street, city and state in one cell) and ZIP. If an input column already uses one of those names, the added column is suffixed \u201c(Enriched)\u201d.",
+      "Multiple values in a cell are separated by \u201c; \u201d. Files are UTF-8 with BOM and RFC 4180 quoted, and scraped values that start with =, + or @ are prefixed with an apostrophe so spreadsheets do not run them as formulas.",
+    ],
+    technologies: [
+      { name: "Next.js 16", kind: "framework" },
+      { name: "React 19", kind: "framework" },
+      { name: "TypeScript", kind: "language" },
+      { name: "Tailwind CSS v4", kind: "library" },
+      { name: "shadcn/ui", kind: "library" },
+      { name: "Framer Motion", kind: "library" },
+      { name: "Vercel", kind: "infra" },
+      { name: "Rule-based content classification", kind: "technique" },
+      { name: "Targeted crawl honouring robots.txt", kind: "technique" },
+      { name: "JSON-LD structured data parsing", kind: "technique" },
+    ],
+    exampleOutputs: [
+      {
+        title: "Enriched CSV export",
+        caption:
+          "Column order exactly as exported: the seven imported columns, then the seven added ones. No enriched sample is committed to the repository, so only the column shape is shown.",
+        columns: [
+          "Account Domain",
+          "Company Name",
+          "Company Industry",
+          "Company Employee Range",
+          "Company Annual Revenue",
+          "Last Activity",
+          "Account Activity URL",
+          "Practice Name",
+          "Doctor Name",
+          "Email",
+          "Phone",
+          "Additional Phones",
+          "Address",
+          "ZIP",
+        ],
+        rows: [],
+      },
+    ],
+    limitations: [
+      "Classification is keyword scoring on fetched HTML, not an AI model. Sites rendered mostly by JavaScript, sitting behind bot protection, or saying little about dentistry come back Unknown or Failed.",
+      "Only Dental rows are crawled and never a whole site: at most 10 prioritised pages per website inside a 45-second budget, so details kept on unusual pages can be missed.",
+      "Every request has a 15-second timeout and a 2 MB size cap, transient failures are retried once, timeouts are not retried, and robots.txt is respected, so slow or blocked sites are recorded as Failed with the reason.",
+      "Only what the pages state is exported. Emails are never built from names, doctors need a \u201cDr.\u201d or DDS/DMD credential next to the name (or structured data), and missing fields stay empty.",
+      "Processing runs from the browser through two API routes, each capped at 60 seconds per call on Vercel. Results live in the tab and are not stored on the server, so download the CSV before closing it.",
+      "Concurrency is fixed at 6 websites during classification and 4 during enrichment, so long lists take a while. The page cache lasts 10 minutes and lives per server instance.",
     ],
   },
 ];

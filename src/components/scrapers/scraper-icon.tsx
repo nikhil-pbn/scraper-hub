@@ -6,6 +6,7 @@ import {
   MessagesSquare,
   Radar,
   Search,
+  Sparkles,
   Waypoints,
   type LucideProps,
 } from "lucide-react";
@@ -21,6 +22,7 @@ const ICONS = {
   "map-pin": MapPin,
   database: Database,
   globe: Globe,
+  sparkles: Sparkles,
 } satisfies Record<ScraperIconKey, React.ComponentType<LucideProps>>;
 
 export function ScraperIcon({
